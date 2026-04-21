@@ -4,20 +4,15 @@ import pandas as pd
 import pandas_ta as ta
 from telegram import Bot
 import os
-from datetime import datetime
-import pytz
+from datetime import datetime, timedelta
+
 TOKEN = os.getenv("TELEGRAM_BOT_TOKEN")
 CHAT_ID = os.getenv("TELEGRAM_CHAT_ID")
 
 def get_price_and_rsi(symbol):
-    """Pobiera cenę i oblicza RSI"""
     try:
         stock = yf.Ticker(symbol)
-        
-        # Pobierz dane historyczne (potrzebne do RSI)
         df = stock.history(period="2mo")
-        
-        # Oblicz RSI (14-okresowy)
         df['RSI'] = ta.rsi(df['Close'], length=14)
         
         current_price = df['Close'].iloc[-1]
@@ -26,7 +21,6 @@ def get_price_and_rsi(symbol):
         change_percent = (change / previous_close) * 100
         current_rsi = df['RSI'].iloc[-1]
         
-        # Generuj sygnał na podstawie RSI
         if current_rsi < 30:
             signal = "🟢 KUPUJ"
             signal_desc = "(wyprzedanie - potencjalna okazja)"
@@ -48,20 +42,14 @@ def get_price_and_rsi(symbol):
             'error': None
         }
     except Exception as e:
-        return {
-            'symbol': symbol,
-            'error': str(e)
-        }
+        return {'symbol': symbol, 'error': str(e)}
 
 async def send_update():
-    """Wysyła raport z analizą techniczną"""
     bot = Bot(token=TOKEN)
     
-    # POLSKA STREFA CZASOWA
-    warsaw_tz = pytz.timezone('Europe/Warsaw')
-    current_time = datetime.now(warsaw_tz)
+    # POLSKI CZAS (UTC + 2 godziny - czas letni)
+    current_time = datetime.utcnow() + timedelta(hours=2)
     
-    # Lista spółek do analizy
     symbols = ["BTC-USD", "ETH-USD", "AAPL", "TSLA"]
     
     message = f"📊 **RAPORT INWESTYCYJNY**\n"
@@ -90,7 +78,7 @@ async def send_update():
     message += f"• RSI 30-70 = Neutralnie\n"
     
     await bot.send_message(chat_id=CHAT_ID, text=message, parse_mode='Markdown')
-    print("✅ Wysłano raport z analizą!")
+    print(f"✅ Wysłano raport! Czas polski: {current_time}")
 
 if __name__ == "__main__":
     asyncio.run(send_update())
