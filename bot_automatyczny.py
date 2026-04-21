@@ -29,7 +29,7 @@ def send_update():
     bot = Bot(token=TOKEN)
     
     # Lista spółek do sprawdzenia
-    symbols = ["BTC-USD", "AAPL", "TSLA"]
+    symbols = ["BTC-USD", "AAPL", "TSLA", "MSFT", "GOOGL", "ETH-USD"]
     
     message = f"📊 **RAPORT - {datetime.now().strftime('%H:%M')}**\n\n"
     
