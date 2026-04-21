@@ -3,12 +3,14 @@ from telegram import Bot
 import os
 from datetime import datetime
 
-# Dane z GitHub Secrets
 TOKEN = os.getenv("TELEGRAM_BOT_TOKEN")
 CHAT_ID = os.getenv("TELEGRAM_CHAT_ID")
 
+# DODAJ TO - debugowanie
+print(f"Token: {TOKEN[:10]}...")
+print(f"Chat ID: {CHAT_ID}")
+
 def get_price(symbol):
-    """Pobiera cenę"""
     stock = yf.Ticker(symbol)
     hist = stock.history(period="1d")
     
@@ -25,21 +27,23 @@ def get_price(symbol):
     }
 
 def send_update():
-    """Wysyła aktualizację"""
     bot = Bot(token=TOKEN)
     
-    # Lista spółek do sprawdzenia
-    symbols = ["BTC-USD", "AAPL", "TSLA", "MSFT", "GOOGL", "ETH-USD"]
+    symbols = ["BTC-USD", "AAPL", "TSLA"]
     
     message = f"📊 **RAPORT - {datetime.now().strftime('%H:%M')}**\n\n"
     
     for symbol in symbols:
         try:
             data = get_price(symbol)
-            emoji = "🟢" if data['change'] >= 0 else "🔴"
+            emoji = "🟢" if data['change'] >= 0 else ""
             message += f"{emoji} **{data['symbol']}**: ${data['price']:.2f} ({data['change_percent']:+.2f}%)\n"
-        except:
+        except Exception as e:
             message += f"❌ {symbol}: Błąd\n"
+            print(f"Błąd dla {symbol}: {e}")
+    
+    print(f"Wysyłam wiadomość do: {CHAT_ID}")
+    print(f"Treść: {message}")
     
     bot.send_message(chat_id=CHAT_ID, text=message, parse_mode='Markdown')
     print("✅ Wysłano raport!")
