@@ -57,11 +57,15 @@ async def send_update():
     """Wysyła raport z analizą techniczną"""
     bot = Bot(token=TOKEN)
     
+    # POLSKA STREFA CZASOWA
+    warsaw_tz = pytz.timezone('Europe/Warsaw')
+    current_time = datetime.now(warsaw_tz)
+    
     # Lista spółek do analizy
     symbols = ["BTC-USD", "ETH-USD", "AAPL", "TSLA"]
     
     message = f"📊 **RAPORT INWESTYCYJNY**\n"
-    message += f"📅 {datetime.now().strftime('%Y-%m-%d %H:%M')}\n\n"
+    message += f"📅 {current_time.strftime('%Y-%m-%d %H:%M')}\n\n"
     message += f"━━━━━━━━━━━━━━━━━━━━━━\n\n"
     
     for symbol in symbols:
