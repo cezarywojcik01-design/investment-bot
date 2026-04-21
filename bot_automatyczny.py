@@ -28,7 +28,7 @@ async def send_update():
     """Wysyła aktualizację na Telegram - ASYNC"""
     bot = Bot(token=TOKEN)
     
-    symbols = ["BTC-USD", "AAPL", "TSLA"]
+    symbols = ["BTC-USD", "ETH-USD", "AAPL", "TSLA", "MSFT", "GOOGL", "AMZN", "^GSPC"]
     
     message = f"📊 **RAPORT - {datetime.now().strftime('%H:%M')}**\n\n"
     
