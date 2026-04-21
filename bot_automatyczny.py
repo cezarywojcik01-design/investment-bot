@@ -5,7 +5,7 @@ import pandas_ta as ta
 from telegram import Bot
 import os
 from datetime import datetime
-
+import pytz
 TOKEN = os.getenv("TELEGRAM_BOT_TOKEN")
 CHAT_ID = os.getenv("TELEGRAM_CHAT_ID")
 
