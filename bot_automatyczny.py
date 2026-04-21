@@ -28,4 +28,23 @@ async def send_update():
     """Wysyła aktualizację na Telegram - ASYNC"""
     bot = Bot(token=TOKEN)
     
-    symbols = ["
+    symbols = ["BTC-USD", "AAPL", "TSLA"]
+    
+    message = f"📊 **RAPORT - {datetime.now().strftime('%H:%M')}**\n\n"
+    
+    for symbol in symbols:
+        try:
+            data = get_price(symbol)
+            emoji = "🟢" if data['change'] >= 0 else "🔴"
+            message += f"{emoji} **{data['symbol']}**: ${data['price']:.2f} ({data['change_percent']:+.2f}%)\n"
+        except Exception as e:
+            message += f"❌ {symbol}: Błąd\n"
+            print(f"Błąd dla {symbol}: {e}")
+    
+    # ASYNC - z await!
+    await bot.send_message(chat_id=CHAT_ID, text=message, parse_mode='Markdown')
+    print("✅ Wysłano raport!")
+
+# Uruchomienie async
+if __name__ == "__main__":
+    asyncio.run(send_update())
